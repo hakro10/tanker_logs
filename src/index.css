@@ -492,15 +492,3 @@ textarea {
 .tiny {
   font-size: 12px;
 }
-
-@media (max-width: 960px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-  .sidebar {
-    order: 2;
-  }
-  .content {
-    order: 1;
-  }
-}
