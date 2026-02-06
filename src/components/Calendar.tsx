@@ -10,6 +10,7 @@ import {
   addDays,
 } from 'date-fns';
 import { WorkLog } from '../types';
+import { combineDateAndTime, readableDuration } from '../lib/time';
 
 interface CalendarProps {
   month: Date;
@@ -25,10 +26,34 @@ function dayHasLog(logs: WorkLog[], iso: string) {
   return logs.some((log) => log.date === iso);
 }
 
+function minutesForLog(log: WorkLog): number {
+  const start = combineDateAndTime(log.date, log.startTime);
+  const end = combineDateAndTime(log.date, log.endTime);
+  return readableDuration(start, end).minutes;
+}
+
 export function Calendar({ month, selectedDate, logs, onSelect, onMonthChange }: CalendarProps) {
   const start = startOfWeek(startOfMonth(month), { weekStartsOn: 1 });
   const end = endOfWeek(endOfMonth(month), { weekStartsOn: 1 });
   const todayISO = format(new Date(), 'yyyy-MM-dd');
+
+  const minutesByDate = new Map<string, number>();
+  logs.forEach((log) => {
+    minutesByDate.set(log.date, minutesForLog(log));
+  });
+
+  const weekMinutes = (day: Date) => {
+    const weekStart = startOfWeek(day, { weekStartsOn: 1 });
+    const weekEnd = endOfWeek(day, { weekStartsOn: 1 });
+    let total = 0;
+    let cursor = weekStart;
+    while (cursor <= weekEnd) {
+      const iso = format(cursor, 'yyyy-MM-dd');
+      total += minutesByDate.get(iso) || 0;
+      cursor = addDays(cursor, 1);
+    }
+    return total;
+  };
 
   const days: Date[] = [];
   let cursor = start;
@@ -68,6 +93,11 @@ export function Calendar({ month, selectedDate, logs, onSelect, onMonthChange }:
           const isToday = iso === todayISO;
           const isSelected = iso === selectedDate;
           const hasLog = dayHasLog(logs, iso);
+          const isSunday = day.getDay() === 0;
+          const weekTotalMinutes = isSunday ? weekMinutes(day) : 0;
+          const weekLabel = isSunday
+            ? `${Math.floor(weekTotalMinutes / 60)}h ${String(weekTotalMinutes % 60).padStart(2, '0')}m`
+            : '';
           return (
             <button
               key={iso}
@@ -75,9 +105,10 @@ export function Calendar({ month, selectedDate, logs, onSelect, onMonthChange }:
                 isToday ? 'today' : ''
               }`}
               onClick={() => onSelect(iso)}
-            >
-              <span className="date-number">{format(day, 'd')}</span>
-              {hasLog && <span className="dot" />}
+              >
+                <span className="date-number">{format(day, 'd')}</span>
+                {hasLog && <span className="dot" />}
+                {isSunday && <span className="week-total">{weekLabel}</span>}
             </button>
           );
         })}
