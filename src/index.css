@@ -72,10 +72,11 @@ body {
   margin-left: 8px;
 }
 
+/* Mobile-first stack */
 .layout {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .sidebar {
@@ -431,21 +432,15 @@ textarea {
   touch-action: manipulation;
 }
 
-@media (max-width: 960px) {
+@media (min-width: 961px) {
   .layout {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 18px;
   }
   .sidebar,
   .content {
-    width: 100%;
-  }
-  .sidebar {
-    order: -1;
-  }
-  .content {
-    order: 0;
+    width: auto;
   }
 }
 
