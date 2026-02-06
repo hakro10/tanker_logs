@@ -175,6 +175,31 @@ body {
   border-radius: 8px;
 }
 
+.week-total-list {
+  display: none;
+}
+
+.week-total-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel-contrast);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.week-total-date {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.week-total-text {
+  font-weight: 700;
+}
+
 .calendar__day:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow);
@@ -493,6 +518,15 @@ textarea {
   .cargo-row,
   .drop-row {
     grid-template-columns: 1fr;
+  }
+  .calendar__day .week-total {
+    display: none;
+  }
+  .week-total-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
   }
 }
 

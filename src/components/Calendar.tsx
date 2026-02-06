@@ -62,6 +62,18 @@ export function Calendar({ month, selectedDate, logs, onSelect, onMonthChange }:
     cursor = addDays(cursor, 1);
   }
 
+  const sundaySummaries: { iso: string; label: string }[] = [];
+  days.forEach((day) => {
+    if (day.getDay() === 0) {
+      const iso = format(day, 'yyyy-MM-dd');
+      const minutes = weekMinutes(day);
+      sundaySummaries.push({
+        iso,
+        label: `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, '0')}m`,
+      });
+    }
+  });
+
   return (
     <div className="calendar">
       <div className="calendar__header">
@@ -113,6 +125,16 @@ export function Calendar({ month, selectedDate, logs, onSelect, onMonthChange }:
           );
         })}
       </div>
+      {sundaySummaries.length > 0 && (
+        <div className="week-total-list">
+          {sundaySummaries.map((w) => (
+            <div key={w.iso} className="week-total-chip">
+              <span className="week-total-date">{w.iso}</span>
+              <span className="week-total-text">{w.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
